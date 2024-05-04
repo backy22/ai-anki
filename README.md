@@ -9,7 +9,7 @@ You can create your own Anki deck with AI generated translation.
 - Create Anki deck storing in Supabase
 - Edit/Delete Anki card
 
-![demo](demo.png)
+![demo](demo.gif)
 
 ## Tech stack
 
