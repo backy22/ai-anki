@@ -4,14 +4,12 @@ import { Footer } from '~/components/site/footer/footer';
 
 export default component$(() => {
   return (
-    <>
-      <main>
-        <Navigation />
-        <section>
-          <Slot />
-        </section>
-        <Footer />
-      </main>
-    </>
+    <main>
+      <Navigation />
+      <section>
+        <Slot />
+      </section>
+      <Footer />
+    </main>
   );
 });

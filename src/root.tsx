@@ -1,17 +1,9 @@
-import {
-  component$,
-  useStyles$,
-  useClientEffect$,
-} from "@builder.io/qwik";
-import {
-  QwikCityProvider,
-  RouterOutlet,
-  ServiceWorkerRegister,
-} from "@builder.io/qwik-city";
-import { RouterHead } from "./components/router-head/router-head";
-import { supabase } from "./utils/supabase";
+import { component$, useStyles$, useVisibleTask$ } from '@builder.io/qwik';
+import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
+import { RouterHead } from './components/router-head/router-head';
+import { supabase } from './utils/supabase';
 
-import globalStyles from "./global.css?inline";
+import globalStyles from './global.css?inline';
 
 export default component$(() => {
   /**
@@ -22,22 +14,16 @@ export default component$(() => {
    */
   useStyles$(globalStyles);
 
-  useClientEffect$(async () => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event: string) => { // session: any
-        console.log(event);
-
-        if (event === "SIGNED_IN") {
-          //Send cookies to server
-
-        }
-
-        if (event === "SIGNED_OUT") {
-          //Sign out user
-
-        }
+  useVisibleTask$(async () => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event: string) => {
+      if (event === 'SIGNED_IN') {
+        //Send cookies to server
       }
-    );
+
+      if (event === 'SIGNED_OUT') {
+        //Sign out user
+      }
+    });
 
     // Cleanup event listener
     return () => {

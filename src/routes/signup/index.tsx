@@ -1,18 +1,18 @@
-import { component$, useStore, useSignal, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import { Message } from "~/components/ui/message";
-import { validateEmail } from "~/utils/helpers";
-import { supabase } from "~/utils/supabase";
+import { component$, useStore, useSignal, $ } from '@builder.io/qwik';
+import { Link } from '@builder.io/qwik-city';
+import { Message } from '~/components/ui/message';
+import { validateEmail } from '~/utils/helpers';
+import { supabase } from '~/utils/supabase';
 
 export default component$(() => {
-  const message: any = useStore({ message: undefined, status: "error" });
+  const message: any = useStore({ message: undefined, status: 'error' });
   const isLoading = useSignal(false);
 
   // Handle email signup
   const handleEmailSignup = $(async (event: any) => {
     // Initialize resets
     message.message = undefined;
-    message.status = "error";
+    message.status = 'error';
     isLoading.value = true;
 
     // Value extraction
@@ -22,15 +22,14 @@ export default component$(() => {
 
     // Email validation
     if (!isEmailValid) {
-      message.message = "You must have a valid email";
+      message.message = 'You must have a valid email';
       isLoading.value = false;
       return;
     }
 
     // Terms validation
     if (!isTerms) {
-      message.message =
-        "You must agree to our terms, privacy and disclaimer before signing up";
+      message.message = 'You must agree to our terms, privacy and disclaimer before signing up';
       isLoading.value = false;
       return;
     }
@@ -47,13 +46,12 @@ export default component$(() => {
 
     // Confirm signup
     if (data?.user?.id) {
-      message.message = "Success. Please check your email/spam folder";
-      message.status = "success";
+      message.message = 'Success. Please check your email/spam folder';
+      message.status = 'success';
       isLoading.value = false;
       return;
     } else {
-      message.message =
-        "There was a problem creating a user. " + error?.message;
+      message.message = 'There was a problem creating a user. ' + error?.message;
       isLoading.value = false;
       return;
     }
@@ -63,17 +61,14 @@ export default component$(() => {
     <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div class="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/">
-          <img class="w-24 h-24 mx-auto" src={"/img/icon.png"} />
+          <div class="bg-red-200 rounded-full h-24 w-24 mx-auto">
+            <img class="w-24 h-24 mx-auto" src={'/img/icon.png'} />
+          </div>
         </Link>
-        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Sign up
-        </h2>
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign up</h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-          Or{" "}
-          <Link
-            href="/login"
-            class="font-medium text-green-600 hover:text-green-500"
-          >
+          Or{' '}
+          <Link href="/login" class="font-medium text-teal-600 hover:text-teal-500">
             log in to my account
           </Link>
         </p>
@@ -81,7 +76,7 @@ export default component$(() => {
 
       <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-sm sm:px-10">
-          <div class="">
+          {/* <div class="">
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <a
@@ -132,17 +127,11 @@ export default component$(() => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <form
-            onSubmit$={handleEmailSignup}
-            preventdefault:submit
-            class="space-y-6"
-          >
+          <form onSubmit$={handleEmailSignup} preventdefault:submit class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
+              <label class="block text-sm font-medium text-gray-700">Email address</label>
               <div class="mt-1">
                 <input
                   id="email"
@@ -150,7 +139,7 @@ export default component$(() => {
                   type="email"
                   autoComplete="email"
                   required
-                  class="block w-full appearance-none rounded-sm border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                  class="block w-full appearance-none rounded-sm border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-sky-800 focus:outline-none focus:ring-sky-800 sm:text-sm"
                 />
               </div>
             </div>
@@ -161,7 +150,7 @@ export default component$(() => {
                   id="marketing"
                   name="marketing"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                  class="h-4 w-4 rounded border-gray-300 text-sky-900 focus:ring-sky-800"
                   checked
                 />
                 <label class="ml-2 block text-sm text-gray-900">
@@ -174,25 +163,21 @@ export default component$(() => {
                   id="terms"
                   name="terms"
                   type="checkbox"
-                  class="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                  class="h-4 w-4 rounded border-gray-300 text-sky-900 focus:ring-sky-800"
                 />
                 <label class="ml-2 block text-sm text-gray-900">
                   <span>
-                    Agree to{" "}
+                    Agree to{' '}
                     <Link href="/terms">
-                      <span class="text-sky-500 hover:text-sky-400">terms</span>
+                      <span class="text-sky-800 hover:text-sky-400">terms</span>
                     </Link>
-                    ,{" "}
+                    ,{' '}
                     <Link href="/privacy">
-                      <span class="text-sky-500 hover:text-sky-400">
-                        privacy
-                      </span>
-                    </Link>{" "}
-                    and{" "}
+                      <span class="text-sky-800 hover:text-sky-400">privacy</span>
+                    </Link>{' '}
+                    and{' '}
                     <Link href="/disclaimer">
-                      <span class="text-sky-500 hover:text-sky-400">
-                        disclaimer
-                      </span>
+                      <span class="text-sky-800 hover:text-sky-400">disclaimer</span>
                     </Link>
                   </span>
                 </label>
@@ -203,7 +188,7 @@ export default component$(() => {
               <button
                 type="submit"
                 disabled={isLoading.value}
-                class="transition-all duration-300 flex w-full justify-center rounded-sm border border-transparent bg-sky-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-500 disabled:hover:bg-gray-500 focus:ring-offset-2"
+                class="transition-all duration-300 flex w-full justify-center rounded-sm border border-transparent bg-sky-800 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-900 focus:outline-none focus:ring-2 focus:ring-sky-800 disabled:bg-gray-500 disabled:hover:bg-gray-500 focus:ring-offset-2"
               >
                 Sign up
               </button>

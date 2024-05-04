@@ -1,66 +1,64 @@
-import {
-  component$,
-  useSignal,
-  $
-} from "@builder.io/qwik";
-import { Logo } from "../logo/logo";
-import { ButtonStd } from "~/components/ui/button-std";
-import { Link } from "@builder.io/qwik-city";
+import { component$, useVisibleTask$, useSignal, $ } from '@builder.io/qwik';
+import { useNavigate } from '@builder.io/qwik-city';
+import { ButtonStd } from '~/components/ui/button-std';
+import { Link } from '@builder.io/qwik-city';
+import { supabase } from '~/utils/supabase';
 
 export const Navigation = component$(() => {
-  const isSession = useSignal(false);
+  const isProtectedOk = useSignal(false);
+  const nav = useNavigate();
 
-  const handleLogout = $(() => {
+  const fetchUser = $(async () => {
+    const { data, error } = await supabase.auth.getUser();
 
-  })
+    if (data?.user?.id && !error) {
+      isProtectedOk.value = true;
+    } else {
+      isProtectedOk.value = false;
+    }
+  });
+
+  useVisibleTask$(() => {
+    fetchUser();
+  });
+
+  const handleLogout = $(async () => {
+    supabase.auth.signOut();
+    isProtectedOk.value = false;
+    await nav('/login');
+  });
 
   return (
     <nav class="bg-white py-4 px-7 sticky">
       <div class="flex justify-between items-center">
         <Link href="/">
-          <Logo />
+          <div>AI Anki</div>
         </Link>
         <div class="flex items-center text-sm">
-          <ul class="flex space-x-10">
-            <li>
-              <Link href="/about">About</Link>
-            </li>
-            <li>
-              <Link href="/shop">Shop</Link>
-            </li>
-            <li>
-              <Link href="/services">Services</Link>
-            </li>
-          </ul>
           <div class="border-r border-gray-300 h-10 ml-10"></div>
           {/* @ts-ignore */}
-          {isSession.value && (
-            <>
-              <button onClick$={handleLogout} class="ml-10">
-                Logout
-              </button>
-              <Link href="/members/dashboard">
-                <ButtonStd
-                  title="Dashboard"
-                  classText="mr-5 ml-10 bg-sky-500 border border-sky-500 hover:bg-sky-400 text-white"
-                />
-              </Link>
-            </>
+          {isProtectedOk.value && (
+            <ButtonStd
+              title="Logout"
+              classText="mr-2 ml-10 border border-sky-800 text-sky-800 hover:text-sky-600 hover:border-sky-600"
+              noBackground
+              handleFunction={$(() => handleLogout())}
+            />
           )}
           {/* @ts-ignore */}
-          {!isSession.value && (
+          {!isProtectedOk.value && (
             <>
               <Link href="/login">
                 <ButtonStd
                   title="Log In"
-                  classText="mr-2 ml-10 border border-sky-500 text-sky-500 hover:text-sky-400 hover:border-sky-400"
+                  classText="mr-2 ml-10 border border-sky-800 text-sky-800 hover:text-sky-600 hover:border-sky-600"
                   noBackground
                 />
               </Link>
               <Link href="/signup">
                 <ButtonStd
                   title="Sign Up"
-                  classText="mr-5 ml-5 bg-green-500 border border-green-500 hover:bg-green-400 text-white"
+                  classText="mr-5 ml-5 bg-teal-600 border border-teal-600 hover:bg-teal-500 text-white"
                 />
               </Link>
             </>
