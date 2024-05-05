@@ -28,6 +28,19 @@ export default component$(() => {
   const user = useSignal<any>(null);
   const nav = useNavigate();
 
+  const fetchCards = $(async () => {
+    const { data, error } = await supabase
+      .from('cards')
+      .select('*')
+      .eq('user_id', user.value.id)
+      .order('id', { ascending: true });
+    if (error) {
+      console.log('error', error);
+    } else {
+      cardsSignal.value = [...data];
+    }
+  });
+
   const fetchUserProfile = $(async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
@@ -41,6 +54,7 @@ export default component$(() => {
         console.log('profileError', profileError);
       } else {
         user.value = profile[0];
+        fetchCards();
       }
     }
   });
@@ -61,18 +75,6 @@ export default component$(() => {
     return () => {
       clearTimeout(timeout);
     };
-  });
-
-  const fetchCards = $(async () => {
-    const { data, error } = await supabase
-      .from('cards')
-      .select('*')
-      .order('id', { ascending: true });
-    if (error) {
-      console.log('error', error);
-    } else {
-      cardsSignal.value = [...data];
-    }
   });
 
   const closeModal = $(async () => {
@@ -130,10 +132,6 @@ export default component$(() => {
     } catch (error) {
       console.log('error', error);
     }
-  });
-
-  useVisibleTask$(() => {
-    fetchCards();
   });
 
   const translate = $(async () => {
