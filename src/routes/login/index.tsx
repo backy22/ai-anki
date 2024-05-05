@@ -31,7 +31,7 @@ export default component$(() => {
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email,
       options: {
-        emailRedirectTo: loc.href + 'staging',
+        emailRedirectTo: loc.url.href + 'staging',
       },
     });
 

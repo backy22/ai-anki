@@ -5,43 +5,16 @@ import { useNavigate } from '@builder.io/qwik-city';
 import { supabase } from '~/utils/supabase';
 import { Navigation } from '~/components/site/navigation/navigation';
 
+interface NewCardType {
+  id?: number;
+  word: string;
+  definition: string;
+}
+
 interface CardType {
-  public: {
-    Tables: {
-      todos: {
-        Row: {
-          id: number;
-          user_id: string;
-          word: string | null;
-          definition: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: number;
-          user_id: string;
-          word: string | null;
-          definition: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: number;
-          user_id?: string;
-          word?: string | null;
-          definition?: string | null;
-          created_at?: string;
-        };
-      };
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      [_ in never]: never;
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-  };
+  id: number;
+  word: string;
+  definition: string;
 }
 
 export default component$(() => {
@@ -49,13 +22,13 @@ export default component$(() => {
   const isShowModal = useSignal(false);
   const isShowEditModal = useSignal(false);
   const cardsSignal = useSignal<CardType[]>([]);
-  const newCard = useStore({ word: '', definition: '' });
+  const newCard = useStore<NewCardType>({ word: '', definition: '' });
   const language = useSignal('English');
   const errorTextSignal = useSignal('');
-  const user = useSignal(null);
+  const user = useSignal<any>(null);
   const nav = useNavigate();
 
-  const fetchUsrProfile = $(async () => {
+  const fetchUserProfile = $(async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
       console.log('error', error);
@@ -73,7 +46,7 @@ export default component$(() => {
   });
 
   useVisibleTask$(() => {
-    fetchUsrProfile();
+    fetchUserProfile();
     const timeout = setTimeout(async () => {
       const { data, error } = await supabase.auth.getUser();
 
@@ -98,7 +71,6 @@ export default component$(() => {
     if (error) {
       console.log('error', error);
     } else {
-      console.log('data---', data);
       cardsSignal.value = [...data];
     }
   });
@@ -111,7 +83,7 @@ export default component$(() => {
   const addCard = $(async (cardText: { word: string; definition: string }) => {
     const word = cardText.word.trim();
     const definition = cardText.definition.trim();
-    if (word.length && definition.length) {
+    if (word.length && definition.length && user.value?.id) {
       const { data: card, error } = await supabase
         .from('cards')
         .insert({ word, definition, user_id: user.value.id })
@@ -195,19 +167,19 @@ export default component$(() => {
     newCard.definition = data;
   });
 
-  const setEditCard = $(async (card) => {
+  const setEditCard = $(async (card: CardType) => {
     newCard.id = card.id;
     newCard.word = card.word;
     newCard.definition = card.definition;
     isShowEditModal.value = !isShowEditModal.value;
   });
 
-  const displayCard = (card) => {
+  const displayCard = (card: CardType) => {
     const showDefinition = useSignal(false);
 
     return (
       <div
-        key={card?.id}
+        key={card.id}
         class={`relative rounded overflow-hidden shadow-lg h-52 p-4 ${
           showDefinition.value ? 'bg-gradient-to-l' : 'bg-gradient-to-r'
         } from-red-100 to-red-200 text-sky-900`}
