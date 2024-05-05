@@ -27,4 +27,4 @@ npm run dev
 
 ## Live
 
-[Link](https://ai-anki-backy22-backy22s-projects.vercel.app/)
+[Link](https://ai-anki.vercel.app/)
