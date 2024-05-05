@@ -24,3 +24,7 @@ You can create your own Anki deck with AI generated translation.
 npm i
 npm run dev
 ```
+
+## Live
+
+[Link](https://ai-anki-backy22-backy22s-projects.vercel.app/)
