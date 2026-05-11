@@ -4,12 +4,12 @@ import { Footer } from '~/components/site/footer/footer';
 
 export default component$(() => {
   return (
-    <main>
+    <div class="flex min-h-screen flex-col">
       <Navigation />
-      <section>
+      <section class="flex flex-1 flex-col">
         <Slot />
       </section>
       <Footer />
-    </main>
+    </div>
   );
 });

@@ -195,65 +195,88 @@ export default component$(() => {
     });
 
     return (
-      <div class="fixed z-10 inset-0 overflow-y-auto bg-white h-[38rem] w-[60rem] m-auto text-sky-900 p-8">
-        <h1 class="text-3xl">{title}</h1>
-        <button class="absolute top-8 right-8" onClick$={closeModal}>
-          Close
-        </button>
-        <form class="mt-10" preventdefault:submit onSubmit$={() => onSumit()}>
-          {errorTextSignal.value && (
-            <p class="mb-4 rounded bg-red-100 px-3 py-2 text-sm text-red-800">{errorTextSignal.value}</p>
-          )}
-          <div class="mb-4">
-            <label class="block text-sm font-bold mb-2" for="word">
-              {action === 'edit' ? 'Word' : 'New word'}
-            </label>
-            <textarea
-              class="border-red-200 shadow appearance-none border h-28 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-wrap"
-              id="word"
-              value={newCard.word}
-              onInput$={(_, el) => (newCard.word = el.value)}
-            />
-          </div>
-          <div class="my-4">
-            <label class="mr-2">Select language and translate or add your own definition</label>
-            <select id="language" onChange$={(_, el) => (language.value = el.value)} class="border">
-              <option value="English" selected>
-                English
-              </option>
-              <option value="Japanese">Japanese</option>
-              <option value="Korean">Korean</option>
-              <option value="Spanish">Spanish</option>
-              <option value="French">French</option>
-            </select>
+      <>
+        <div
+          class="fixed inset-0 z-40 bg-slate-950/55 backdrop-blur-[2px]"
+          onClick$={() => closeModal()}
+          aria-hidden="true"
+        />
+        <div class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6">
+          <div
+            class="relative mt-8 w-full max-w-lg rounded-2xl border border-slate-100 bg-white p-6 text-sky-900 shadow-modal sm:mt-0 sm:p-8"
+          >
             <button
-              preventdefault:click
-              onClick$={$(() => translate())}
-              class="ml-2 border-2 border-sky-900 hover:border-sky-800 rounded-sm transition-all duration-300 px-4 py-2"
+              type="button"
+              class="btn-ghost absolute right-3 top-3 text-slate-500 hover:text-slate-800"
+              onClick$={closeModal}
             >
-              Translate
+              Close
             </button>
+            <h2 class="font-display pr-16 text-2xl font-semibold tracking-tight text-sky-950">{title}</h2>
+            <form class="mt-8 space-y-5" preventdefault:submit onSubmit$={() => onSumit()}>
+              {errorTextSignal.value && (
+                <p
+                  role="alert"
+                  class="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-900"
+                >
+                  {errorTextSignal.value}
+                </p>
+              )}
+              <div>
+                <label class="ui-label" for="word">
+                  {action === 'edit' ? 'Word' : 'New word'}
+                </label>
+                <textarea
+                  class="ui-textarea border-red-100"
+                  id="word"
+                  value={newCard.word}
+                  onInput$={(_, el) => (newCard.word = el.value)}
+                />
+              </div>
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div class="min-w-0 flex-1">
+                  <label class="ui-label" for="language">
+                    Translate to
+                  </label>
+                  <select
+                    id="language"
+                    class="ui-select border-red-100"
+                    onChange$={(_, el) => (language.value = el.value)}
+                  >
+                    <option value="English">English</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Korean">Korean</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  preventdefault:click
+                  onClick$={$(() => translate())}
+                  class="btn-primary shrink-0 sm:min-w-[8rem]"
+                >
+                  Translate
+                </button>
+              </div>
+              <div>
+                <label class="ui-label" for="definition">
+                  Definition
+                </label>
+                <textarea
+                  class="ui-textarea border-red-100"
+                  id="definition"
+                  value={newCard.definition}
+                  onInput$={(_, el) => (newCard.definition = el.value)}
+                />
+              </div>
+              <div class="flex justify-end border-t border-slate-100 pt-2">
+                <ButtonStd title="Save card" type="submit" classText="btn-primary min-w-[9rem]" />
+              </div>
+            </form>
           </div>
-          <div class="mb-6">
-            <label class="block text-sm font-bold mb-2" for="definition">
-              Definition
-            </label>
-            <textarea
-              class="border-red-200 shadow appearance-none border h-28 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="definition"
-              value={newCard.definition}
-              onInput$={(_, el) => (newCard.definition = el.value)}
-            />
-          </div>
-          <div class="flex justify-center">
-            <ButtonStd
-              title="Submit"
-              type="submit"
-              classText="border-sky-800 border-2 hover:bg-sky-800 shadow-xl hover:shadow-none hover:text-red-200 font-semibold"
-            />
-          </div>
-        </form>
-      </div>
+        </div>
+      </>
     );
   };
 
@@ -261,34 +284,48 @@ export default component$(() => {
     <main>
       <Navigation />
       {isShow.value && (
-        <div class="text-white bg-sky-900 min-h-screen">
+        <div class="min-h-screen bg-sky-900 pb-16 text-white">
           {isShowModal.value && modal('register')}
           {isShowEditModal.value && modal('edit')}
-          <div class="container mx-auto py-7">
-            <ButtonStd
-              title="Add new card"
-              handleFunction={$(() => {
-                errorTextSignal.value = '';
-                isShowModal.value = !isShowModal.value;
-              })}
-              classText="text-sky-900 bg-red-200 shadow font-semibold hover:bg-red-100 my-5"
-            />
-            <h1 class="text-3xl my-5">Your Cards</h1>
-            <div class="grid grid-cols-3 gap-4">
-              {cardsSignal.value.map((card) => (
-                <DashboardCard
-                  key={card.id}
-                  card={card}
-                  onDelete$={deleteCard}
-                  onEdit$={setEditCard}
-                />
-              ))}
-            </div>
+          <div class="mx-auto max-w-6xl px-4 pt-8 sm:px-6 lg:px-8 lg:pt-10">
+            <header class="mb-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h1 class="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                  Your cards
+                </h1>
+                <p class="mt-2 max-w-xl text-sm leading-relaxed text-sky-200/95">
+                  Tap a card to flip between word and definition. Use the icons to edit or delete.
+                </p>
+              </div>
+              <ButtonStd
+                title="Add card"
+                handleFunction={$(() => {
+                  errorTextSignal.value = '';
+                  isShowModal.value = !isShowModal.value;
+                })}
+                classText="btn-primary shrink-0 bg-red-200 font-semibold text-sky-950 shadow-md hover:bg-red-100 hover:text-sky-950"
+              />
+            </header>
+
+            {cardsSignal.value.length === 0 ? (
+              <div class="rounded-2xl border border-sky-700/50 bg-sky-800/40 px-6 py-14 text-center">
+                <p class="font-display text-lg text-sky-100">No cards yet</p>
+                <p class="mt-2 text-sm text-sky-200/80">Add your first card to start studying.</p>
+              </div>
+            ) : (
+              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {cardsSignal.value.map((card) => (
+                  <DashboardCard
+                    key={card.id}
+                    card={card}
+                    onDelete$={deleteCard}
+                    onEdit$={setEditCard}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      )}
-      {(isShowModal.value || isShowEditModal.value) && (
-        <div class="bg-black/70 h-screen w-screen absolute top-0" onClick$={() => closeModal()} />
       )}
     </main>
   );

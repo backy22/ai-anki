@@ -58,24 +58,26 @@ export default component$(() => {
   });
 
   return (
-    <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="flex min-h-[calc(100dvh-5rem)] flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/">
-          <div class="bg-red-200 rounded-full h-24 w-24 mx-auto">
-            <img class="w-24 h-24 mx-auto" src={'/img/icon.png'} />
+        <Link href="/" class="block">
+          <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-200 shadow-inner ring-4 ring-white">
+            <img class="h-20 w-20" width={80} height={80} src={'/img/icon.png'} alt="" />
           </div>
         </Link>
-        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign up</h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
+        <h2 class="font-display mt-8 text-center text-3xl font-semibold tracking-tight text-slate-900">
+          Sign up
+        </h2>
+        <p class="mt-2 text-center text-sm text-slate-600">
           Or{' '}
-          <Link href="/login" class="font-medium text-teal-600 hover:text-teal-500">
-            log in to my account
+          <Link href="/login" class="font-semibold text-sky-800 underline-offset-4 hover:underline">
+            log in to your account
           </Link>
         </p>
       </div>
 
       <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-sm sm:px-10">
+        <div class="rounded-2xl border border-slate-100 bg-white px-5 py-8 shadow-card sm:px-8">
           {/* <div class="">
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -131,17 +133,17 @@ export default component$(() => {
 
           <form onSubmit$={handleEmailSignup} preventdefault:submit class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Email address</label>
-              <div class="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  class="block w-full appearance-none rounded-sm border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-sky-800 focus:outline-none focus:ring-sky-800 sm:text-sm"
-                />
-              </div>
+              <label class="ui-label" for="email">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                class="ui-input"
+              />
             </div>
 
             <div class="flex flex-col items-start justify-between space-y-4">
@@ -185,16 +187,10 @@ export default component$(() => {
             </div>
 
             <div>
-              <button
-                type="submit"
-                disabled={isLoading.value}
-                class="transition-all duration-300 flex w-full justify-center rounded-sm border border-transparent bg-sky-800 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-900 focus:outline-none focus:ring-2 focus:ring-sky-800 disabled:bg-gray-500 disabled:hover:bg-gray-500 focus:ring-offset-2"
-              >
+              <button type="submit" disabled={isLoading.value} class="btn-primary w-full disabled:opacity-60">
                 Sign up
               </button>
-              <p class="text-xs text-center text-gray-500 mt-1">
-                No password required. Authorize via email.
-              </p>
+              <p class="mt-2 text-center text-xs text-slate-500">We’ll send a confirmation to your inbox.</p>
             </div>
             <Message message={message} />
           </form>

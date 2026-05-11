@@ -29,42 +29,36 @@ export const Navigation = component$(() => {
   });
 
   return (
-    <nav class="bg-white py-4 px-7 sticky">
-      <div class="flex justify-between items-center">
-        <Link href="/">
-          <div>AI Anki</div>
+    <header class="sticky top-0 z-40 border-b border-sky-900/10 bg-white/90 backdrop-blur-md">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+        <Link href="/" class="group flex items-center gap-2">
+          <span class="font-display text-xl font-semibold tracking-tight text-sky-950 transition-colors group-hover:text-sky-800">
+            AI Anki
+          </span>
         </Link>
-        <div class="flex items-center text-sm">
-          <div class="border-r border-gray-300 h-10 ml-10"></div>
-          {/* @ts-ignore */}
+        <div class="flex items-center gap-2 sm:gap-3">
           {isProtectedOk.value && (
             <ButtonStd
-              title="Logout"
-              classText="mr-2 ml-10 border border-sky-800 text-sky-800 hover:text-sky-600 hover:border-sky-600"
-              noBackground
+              title="Log out"
+              classText="btn-ghost border-0 text-sky-900 hover:bg-sky-50"
               handleFunction={$(() => handleLogout())}
             />
           )}
-          {/* @ts-ignore */}
           {!isProtectedOk.value && (
             <>
-              <Link href="/login">
-                <ButtonStd
-                  title="Log In"
-                  classText="mr-2 ml-10 border border-sky-800 text-sky-800 hover:text-sky-600 hover:border-sky-600"
-                  noBackground
-                />
+              <Link href="/login" class="btn-secondary px-4 py-2 text-sm shadow-none">
+                Log in
               </Link>
-              <Link href="/signup">
-                <ButtonStd
-                  title="Sign Up"
-                  classText="mr-5 ml-5 bg-teal-600 border border-teal-600 hover:bg-teal-500 text-white"
-                />
+              <Link
+                href="/signup"
+                class="inline-flex items-center justify-center rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-sky-950 shadow-sm transition-colors hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
+              >
+                Sign up
               </Link>
             </>
           )}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 });
