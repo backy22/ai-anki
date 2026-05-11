@@ -22,16 +22,16 @@ export const RouterHead = component$(() => {
         referrerPolicy="no-referrer"
       />
 
-      {head.meta.map((m) => (
-        <meta {...m} />
+      {head.meta.map((m, i) => (
+        <meta key={m.key ?? `meta-${i}`} {...m} />
       ))}
 
-      {head.links.map((l) => (
-        <link {...l} />
+      {head.links.map((l, i) => (
+        <link key={l.key ?? `link-${i}`} {...l} />
       ))}
 
-      {head.styles.map((s) => (
-        <style {...s.props} dangerouslySetInnerHTML={s.style} />
+      {head.styles.map((s, i) => (
+        <style key={s.key ?? `style-${i}`} {...s.props} />
       ))}
     </>
   );

@@ -2,7 +2,7 @@
   "name": "my-qwik-basic-starter",
   "description": "App with Routing built-in (recommended)",
   "engines": {
-    "node": ">=15.0.0"
+    "node": ">=20.9.0"
   },
   "private": true,
   "scripts": {
@@ -22,27 +22,26 @@
     "qwik": "qwik"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.5.2",
-    "@builder.io/qwik-city": "^1.5.2",
-    "@types/eslint": "8.4.10",
-    "@types/node": "^18.11.16",
-    "@types/node-fetch": "latest",
-    "@typescript-eslint/eslint-plugin": "5.46.1",
-    "@typescript-eslint/parser": "5.46.1",
-    "autoprefixer": "10.4.11",
-    "eslint": "8.30.0",
-    "eslint-plugin-qwik": "0.16.1",
-    "node-fetch": "3.3.0",
-    "postcss": "^8.4.16",
-    "prettier": "^2.8.1",
-    "tailwindcss": "^3.1.8",
-    "typescript": "4.9.4",
-    "undici": "5.14.0",
-    "vercel": "^29.1.1",
-    "vite": "^5.2.10",
+    "@builder.io/qwik": "^1.19.2",
+    "@builder.io/qwik-city": "^1.19.2",
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^22.19.1",
+    "@types/ws": "^8.18.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-qwik": "^1.19.2",
+    "globals": "^15.14.0",
+    "postcss": "^8.5.14",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.59.2",
+    "vercel": "^53.3.2",
+    "vite": "^6.4.2",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.2.2"
+    "@supabase/supabase-js": "^2.105.4",
+    "ws": "^8.19.0"
   }
 }

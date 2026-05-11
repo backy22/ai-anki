@@ -5,12 +5,14 @@ interface ItemProps {
   classText?: string;
   handleFunction?: any;
   noBackground?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 export const ButtonStd = component$((props: ItemProps) => {
 
   return (
     <button
+      type={props.type ?? 'button'}
       onClick$={props.handleFunction}
       class={
         props.classText +

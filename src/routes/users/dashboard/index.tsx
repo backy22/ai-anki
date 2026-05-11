@@ -4,6 +4,7 @@ import type { DocumentHead } from '@builder.io/qwik-city';
 import { useNavigate } from '@builder.io/qwik-city';
 import { supabase } from '~/utils/supabase';
 import { Navigation } from '~/components/site/navigation/navigation';
+import { DashboardCard, type DashboardCardModel } from '~/components/dashboard/dashboard-card';
 
 interface NewCardType {
   id?: number;
@@ -11,11 +12,7 @@ interface NewCardType {
   definition: string;
 }
 
-interface CardType {
-  id: number;
-  word: string;
-  definition: string;
-}
+type CardType = DashboardCardModel;
 
 export default component$(() => {
   const isShow = useSignal(true);
@@ -43,20 +40,24 @@ export default component$(() => {
 
   const fetchUserProfile = $(async () => {
     const { data, error } = await supabase.auth.getUser();
-    if (error) {
+    if (error || !data.user) {
       console.log('error', error);
-    } else {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id);
-      if (profileError) {
-        console.log('profileError', profileError);
-      } else {
-        user.value = profile[0];
-        fetchCards();
-      }
+      return;
     }
+    const authId = data.user.id;
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authId)
+      .maybeSingle();
+
+    if (profileError) {
+      console.log('profileError', profileError);
+    }
+
+    // Cards use auth user id; a profiles row may not exist yet on a fresh project.
+    user.value = profile ? { ...profile, id: authId } : { id: authId };
+    fetchCards();
   });
 
   useVisibleTask$(() => {
@@ -78,50 +79,61 @@ export default component$(() => {
   });
 
   const closeModal = $(async () => {
+    errorTextSignal.value = '';
     isShowModal.value = false;
     isShowEditModal.value = false;
   });
 
   const addCard = $(async (cardText: { word: string; definition: string }) => {
+    errorTextSignal.value = '';
     const word = cardText.word.trim();
     const definition = cardText.definition.trim();
-    if (word.length && definition.length && user.value?.id) {
-      const { data: card, error } = await supabase
-        .from('cards')
-        .insert({ word, definition, user_id: user.value.id })
-        .select()
-        .single();
+    if (!word.length || !definition.length) {
+      errorTextSignal.value = 'Please enter both a word and a definition.';
+      return;
+    }
+    if (!user.value?.id) {
+      errorTextSignal.value = 'Could not load your account. Try refreshing the page.';
+      return;
+    }
+    const { data: card, error } = await supabase
+      .from('cards')
+      .insert({ word, definition, user_id: user.value.id })
+      .select()
+      .single();
 
-      if (error) {
-        errorTextSignal.value = error.message;
-      } else {
-        cardsSignal.value = [...cardsSignal.value, card];
-        newCard.word = '';
-        newCard.definition = '';
-        closeModal();
-      }
+    if (error) {
+      errorTextSignal.value = error.message;
+    } else {
+      cardsSignal.value = [...cardsSignal.value, card];
+      newCard.word = '';
+      newCard.definition = '';
+      closeModal();
     }
   });
 
   const editCard = $(async (cardText: { word: string; definition: string }) => {
+    errorTextSignal.value = '';
     const word = cardText.word.trim();
     const definition = cardText.definition.trim();
-    if (word.length && definition.length) {
-      const { data: card, error } = await supabase
-        .from('cards')
-        .update({ word, definition })
-        .eq('id', newCard.id)
-        .select()
-        .single();
+    if (!word.length || !definition.length) {
+      errorTextSignal.value = 'Please enter both a word and a definition.';
+      return;
+    }
+    const { data: card, error } = await supabase
+      .from('cards')
+      .update({ word, definition })
+      .eq('id', newCard.id)
+      .select()
+      .single();
 
-      if (error) {
-        errorTextSignal.value = error.message;
-      } else {
-        cardsSignal.value = cardsSignal.value.map((x) => (x.id === card.id ? card : x));
-        newCard.word = '';
-        newCard.definition = '';
-        closeModal();
-      }
+    if (error) {
+      errorTextSignal.value = error.message;
+    } else {
+      cardsSignal.value = cardsSignal.value.map((x) => (x.id === card.id ? card : x));
+      newCard.word = '';
+      newCard.definition = '';
+      closeModal();
     }
   });
 
@@ -172,43 +184,6 @@ export default component$(() => {
     isShowEditModal.value = !isShowEditModal.value;
   });
 
-  const displayCard = (card: CardType) => {
-    const showDefinition = useSignal(false);
-
-    return (
-      <div
-        key={card.id}
-        class={`relative rounded overflow-hidden shadow-lg h-52 p-4 ${
-          showDefinition.value ? 'bg-gradient-to-l' : 'bg-gradient-to-r'
-        } from-red-100 to-red-200 text-sky-900`}
-        onClick$={() => (showDefinition.value = !showDefinition.value)}
-      >
-        <p
-          class={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full text-center ${
-            showDefinition.value ? 'invisible' : 'visible'
-          }`}
-        >
-          {card.word}
-        </p>
-        <div
-          class={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full overflow-y-auto flex justify-center max-h-52 ${
-            showDefinition.value ? 'visible' : 'invisible'
-          }`}
-        >
-          <p>{card.definition}</p>
-        </div>
-        <div class="flex gap-2 justify-end">
-          <button onClick$={() => deleteCard(card.id)} class="ml-2" preventdefault:click>
-            <i class="fa-solid fa-trash-can" />
-          </button>
-          <button onClick$={() => setEditCard(card)} class="ml-2" preventdefault:click>
-            <i class="fa-solid fa-pencil" />
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   const modal = (action: string) => {
     const title = action === 'edit' ? 'Edit the card' : 'Add new card';
     const onSumit = $(async () => {
@@ -226,6 +201,9 @@ export default component$(() => {
           Close
         </button>
         <form class="mt-10" preventdefault:submit onSubmit$={() => onSumit()}>
+          {errorTextSignal.value && (
+            <p class="mb-4 rounded bg-red-100 px-3 py-2 text-sm text-red-800">{errorTextSignal.value}</p>
+          )}
           <div class="mb-4">
             <label class="block text-sm font-bold mb-2" for="word">
               {action === 'edit' ? 'Word' : 'New word'}
@@ -270,6 +248,7 @@ export default component$(() => {
           <div class="flex justify-center">
             <ButtonStd
               title="Submit"
+              type="submit"
               classText="border-sky-800 border-2 hover:bg-sky-800 shadow-xl hover:shadow-none hover:text-red-200 font-semibold"
             />
           </div>
@@ -288,14 +267,22 @@ export default component$(() => {
           <div class="container mx-auto py-7">
             <ButtonStd
               title="Add new card"
-              handleFunction={$(() => (isShowModal.value = !isShowModal.value))}
+              handleFunction={$(() => {
+                errorTextSignal.value = '';
+                isShowModal.value = !isShowModal.value;
+              })}
               classText="text-sky-900 bg-red-200 shadow font-semibold hover:bg-red-100 my-5"
             />
             <h1 class="text-3xl my-5">Your Cards</h1>
             <div class="grid grid-cols-3 gap-4">
-              {cardsSignal.value.map((card) => {
-                return displayCard(card);
-              })}
+              {cardsSignal.value.map((card) => (
+                <DashboardCard
+                  key={card.id}
+                  card={card}
+                  onDelete$={deleteCard}
+                  onEdit$={setEditCard}
+                />
+              ))}
             </div>
           </div>
         </div>

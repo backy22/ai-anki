@@ -16,6 +16,7 @@ import { manifest } from "@qwik-client-manifest";
 import render from "./entry.ssr";
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- platform augmentation for Qwik City
   interface QwikCityPlatform extends PlatformVercel {}
 }
 
